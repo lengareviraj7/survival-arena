@@ -1,6 +1,7 @@
 // Notes Management
+
 function loadNotes() {
-    const notes = Storage.get('notes') || [];
+    const notes = getNotes();
     renderNotes(notes);
 }
 
@@ -12,99 +13,114 @@ function renderNotes(notes) {
         return;
     }
     
-    container.innerHTML = notes.map(n => `
-        <div class="note-card" onclick="viewNote('${n.id}')">
-            <h3>${n.title}</h3>
-            <p class="note-subject">📁 ${n.subject}</p>
-            <p class="note-preview">${n.content}</p>
-            <div class="assignment-actions" onclick="event.stopPropagation()">
-                <button class="btn-icon" onclick="editNote('${n.id}')">✏️</button>
-                <button class="btn-icon" onclick="deleteNote('${n.id}')">🗑️</button>
+    // Sort by updated date
+    const sortedNotes = sortByDate(notes, 'updatedAt', false);
+    
+    container.innerHTML = sortedNotes.map(note => `
+        <div class="note-card" data-id="${note.id}" onclick="viewNote('${note.id}')">
+            <h3>${escapeHtml(note.title)}</h3>
+            <p class="note-subject">📁 ${escapeHtml(note.subject)}</p>
+            <p class="note-preview">${escapeHtml(truncateText(note.content, 150))}</p>
+            <div class="note-footer">
+                <span class="note-date">${formatDate(note.updatedAt)}</span>
+                <div class="note-actions" onclick="event.stopPropagation()">
+                    <button class="btn-icon" onclick="editNote('${note.id}')" title="Edit">✏️</button>
+                    <button class="btn-icon" onclick="deleteNoteConfirm('${note.id}')" title="Delete">🗑️</button>
+                </div>
             </div>
         </div>
     `).join('');
-}
-
-function showAddNote() {
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('addNoteModal').classList.remove('hidden');
-    document.getElementById('noteTitle').value = '';
-    document.getElementById('noteSubject').value = '';
-    document.getElementById('noteContent').value = '';
+    
+    staggerAnimation('.note-card', 50);
 }
 
 function addNote(event) {
     event.preventDefault();
     
+    const title = document.getElementById('noteTitle').value;
+    const subject = document.getElementById('noteSubject').value;
+    const content = document.getElementById('noteContent').value;
+    
     const note = {
-        id: generateId(),
-        title: document.getElementById('noteTitle').value,
-        subject: document.getElementById('noteSubject').value,
-        content: document.getElementById('noteContent').value,
-        createdAt: new Date().toISOString()
+        title,
+        subject,
+        content
     };
     
-    const notes = Storage.get('notes') || [];
-    notes.push(note);
-    Storage.set('notes', notes);
+    addNote(note);
+    showNotification('Note saved successfully!', 'success');
     
     closeModal();
     loadNotes();
+    
+    event.target.reset();
 }
 
 function viewNote(id) {
-    const notes = Storage.get('notes') || [];
-    const note = notes.find(n => n.id === id);
+    const note = getNotes().find(n => n.id === id);
     if (!note) return;
     
-    alert(`${note.title}\n\n${note.content}`);
+    // Create a view modal
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content modal-large">
+            <h3>${escapeHtml(note.title)}</h3>
+            <p class="note-subject">📁 ${escapeHtml(note.subject)}</p>
+            <div class="note-content-view">${escapeHtml(note.content).replace(/\n/g, '<br>')}</div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="editNote('${note.id}'); this.closest('.modal').remove();">Edit</button>
+                <button class="btn btn-secondary" onclick="this.closest('.modal').remove(); closeModal();">Close</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    document.getElementById('modalOverlay').classList.remove('hidden');
+    modal.classList.remove('hidden');
 }
 
 function editNote(id) {
-    const notes = Storage.get('notes') || [];
-    const note = notes.find(n => n.id === id);
+    const note = getNotes().find(n => n.id === id);
     if (!note) return;
     
     document.getElementById('noteTitle').value = note.title;
     document.getElementById('noteSubject').value = note.subject;
     document.getElementById('noteContent').value = note.content;
     
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('addNoteModal').classList.remove('hidden');
-    
     const form = document.querySelector('#addNoteModal form');
     form.onsubmit = (e) => {
         e.preventDefault();
-        note.title = document.getElementById('noteTitle').value;
-        note.subject = document.getElementById('noteSubject').value;
-        note.content = document.getElementById('noteContent').value;
-        Storage.set('notes', notes);
+        updateNote(id, {
+            title: document.getElementById('noteTitle').value,
+            subject: document.getElementById('noteSubject').value,
+            content: document.getElementById('noteContent').value
+        });
+        showNotification('Note updated!', 'success');
         closeModal();
         loadNotes();
         form.onsubmit = addNote;
     };
+    
+    showModal('addNoteModal');
 }
 
-function deleteNote(id) {
-    if (!confirm('Delete this note?')) return;
-    
-    let notes = Storage.get('notes') || [];
-    notes = notes.filter(n => n.id !== id);
-    Storage.set('notes', notes);
-    loadNotes();
+function deleteNoteConfirm(id) {
+    if (confirm('Are you sure you want to delete this note?')) {
+        deleteNote(id);
+        showNotification('Note deleted', 'info');
+        loadNotes();
+    }
 }
 
-document.getElementById('notesSearch')?.addEventListener('input', (e) => {
-    const search = e.target.value.toLowerCase();
-    let notes = Storage.get('notes') || [];
+// Search functionality
+document.getElementById('notesSearch')?.addEventListener('input', debounce((e) => {
+    const searchTerm = e.target.value;
+    let notes = getNotes();
     
-    if (search) {
-        notes = notes.filter(n => 
-            n.title.toLowerCase().includes(search) || 
-            n.subject.toLowerCase().includes(search) ||
-            n.content.toLowerCase().includes(search)
-        );
+    if (searchTerm) {
+        notes = filterBySearch(notes, searchTerm, ['title', 'subject', 'content']);
     }
     
     renderNotes(notes);
-});
+}, 300));

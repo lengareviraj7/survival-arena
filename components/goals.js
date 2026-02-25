@@ -1,6 +1,7 @@
 // Goals Management
+
 function loadGoals() {
-    const goals = Storage.get('goals') || [];
+    const goals = getGoals();
     renderGoals(goals);
 }
 
@@ -12,116 +13,96 @@ function renderGoals(goals) {
         return;
     }
     
-    container.innerHTML = goals.map(g => {
-        const status = getGoalStatus(g);
+    container.innerHTML = goals.map(goal => {
+        const progress = goal.progress || 0;
+        const status = getGoalStatus(goal);
+        
         return `
-            <div class="goal-card">
+            <div class="goal-card" data-id="${goal.id}">
                 <div class="goal-header">
-                    <h3>${g.title}</h3>
-                    <span class="goal-type">${g.type === 'academic' ? '🎓 Academic' : '💡 Skill'}</span>
+                    <div>
+                        <h3>${escapeHtml(goal.title)}</h3>
+                        <span class="goal-type">${goal.type === 'academic' ? '🎓 Academic' : '💡 Skill'}</span>
+                    </div>
+                    <button class="btn-icon" onclick="deleteGoalConfirm('${goal.id}')" title="Delete">🗑️</button>
                 </div>
-                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
-                    Target: ${formatDate(g.targetDate)}
-                </p>
+                <p class="goal-target">Target: ${formatDate(goal.targetDate)}</p>
                 <div class="goal-progress">
                     <div class="goal-progress-text">
                         <span>Progress</span>
-                        <span class="goal-status status-${status.class}">${status.text}</span>
+                        <span class="goal-status status-${status.toLowerCase().replace(' ', '-')}">${status}</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${g.progress}%"></div>
+                        <div class="progress-fill" style="width: ${progress}%"></div>
                     </div>
-                    <p style="text-align: center; margin-top: 0.5rem; font-weight: 600;">${g.progress}%</p>
-                </div>
-                <div class="assignment-actions" style="margin-top: 1rem;">
-                    <button class="btn-icon" onclick="updateGoalProgress('${g.id}')">📈</button>
-                    <button class="btn-icon" onclick="editGoal('${g.id}')">✏️</button>
-                    <button class="btn-icon" onclick="deleteGoal('${g.id}')">🗑️</button>
+                    <div class="goal-progress-controls">
+                        <input type="range" min="0" max="100" value="${progress}" 
+                               onchange="updateGoalProgress('${goal.id}', this.value)"
+                               class="progress-slider">
+                        <span class="progress-value">${progress}%</span>
+                    </div>
                 </div>
             </div>
         `;
     }).join('');
+    
+    staggerAnimation('.goal-card', 50);
 }
 
 function getGoalStatus(goal) {
-    if (goal.progress >= 100) return { text: 'Completed', class: 'completed' };
+    const progress = goal.progress || 0;
+    const daysUntil = getDaysUntil(goal.targetDate);
     
-    const daysLeft = getDaysUntil(goal.targetDate);
-    const expectedProgress = Math.max(0, 100 - daysLeft);
+    if (progress >= 100) return 'Completed';
+    if (daysUntil < 0) return 'Overdue';
     
-    if (goal.progress >= expectedProgress) return { text: 'On Track', class: 'on-track' };
-    return { text: 'Behind', class: 'behind' };
-}
-
-function showAddGoal() {
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('addGoalModal').classList.remove('hidden');
+    const expectedProgress = Math.max(0, 100 - (daysUntil * 2));
+    
+    if (progress >= expectedProgress) return 'On Track';
+    if (progress >= expectedProgress * 0.7) return 'Behind';
+    return 'At Risk';
 }
 
 function addGoal(event) {
     event.preventDefault();
     
+    const title = document.getElementById('goalTitle').value;
+    const type = document.getElementById('goalType').value;
+    const targetDate = document.getElementById('goalTarget').value;
+    const progress = parseInt(document.getElementById('goalProgress').value) || 0;
+    
     const goal = {
-        id: generateId(),
-        title: document.getElementById('goalTitle').value,
-        type: document.getElementById('goalType').value,
-        targetDate: document.getElementById('goalTarget').value,
-        progress: parseInt(document.getElementById('goalProgress').value),
-        createdAt: new Date().toISOString()
+        title,
+        type,
+        targetDate,
+        progress
     };
     
-    const goals = Storage.get('goals') || [];
-    goals.push(goal);
-    Storage.set('goals', goals);
+    addGoal(goal);
+    showNotification('Goal added successfully!', 'success');
     
     closeModal();
     loadGoals();
+    loadDashboardData();
+    
+    event.target.reset();
 }
 
-function updateGoalProgress(id) {
-    const goals = Storage.get('goals') || [];
-    const goal = goals.find(g => g.id === id);
-    if (!goal) return;
+function updateGoalProgress(id, progress) {
+    updateGoal(id, { progress: parseInt(progress) });
+    loadGoals();
+    loadDashboardData();
     
-    const newProgress = prompt(`Update progress for "${goal.title}" (0-100):`, goal.progress);
-    if (newProgress !== null) {
-        goal.progress = Math.min(100, Math.max(0, parseInt(newProgress) || 0));
-        Storage.set('goals', goals);
-        loadGoals();
+    if (parseInt(progress) === 100) {
+        showNotification('Goal completed! 🎉', 'success');
     }
 }
 
-function editGoal(id) {
-    const goals = Storage.get('goals') || [];
-    const goal = goals.find(g => g.id === id);
-    if (!goal) return;
-    
-    document.getElementById('goalTitle').value = goal.title;
-    document.getElementById('goalType').value = goal.type;
-    document.getElementById('goalTarget').value = goal.targetDate;
-    document.getElementById('goalProgress').value = goal.progress;
-    
-    showAddGoal();
-    
-    const form = document.querySelector('#addGoalModal form');
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        goal.title = document.getElementById('goalTitle').value;
-        goal.type = document.getElementById('goalType').value;
-        goal.targetDate = document.getElementById('goalTarget').value;
-        goal.progress = parseInt(document.getElementById('goalProgress').value);
-        Storage.set('goals', goals);
-        closeModal();
+function deleteGoalConfirm(id) {
+    if (confirm('Are you sure you want to delete this goal?')) {
+        deleteGoal(id);
+        showNotification('Goal deleted', 'info');
         loadGoals();
-        form.onsubmit = addGoal;
-    };
-}
-
-function deleteGoal(id) {
-    if (!confirm('Delete this goal?')) return;
-    
-    let goals = Storage.get('goals') || [];
-    goals = goals.filter(g => g.id !== id);
-    Storage.set('goals', goals);
-    loadGoals();
+        loadDashboardData();
+    }
 }

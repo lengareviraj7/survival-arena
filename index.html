@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/animations.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -18,63 +20,264 @@
 
     <!-- Landing Page -->
     <div id="landingPage" class="landing-page">
-        <!-- Hero Section -->
+        <!-- Hero Section with 3D -->
         <section class="hero">
+            <div id="hero3d" class="hero-3d-container"></div>
+            <div id="particleContainer" class="particle-container"></div>
             <div class="hero-content">
-                <h1 class="hero-title fade-in">Upgrade Your Academic Life.</h1>
-                <p class="hero-subtitle fade-in-delay">All your assignments, exams, notes and goals in one powerful productivity OS.</p>
-                <div class="hero-buttons fade-in-delay-2">
-                    <button class="btn btn-primary" onclick="showAuth('signup')">Get Started</button>
-                    <button class="btn btn-secondary" onclick="showAuth('login')">Login</button>
+                <div class="hero-badge fade-in">🎓 Built for Students, Designed for Success</div>
+                <h1 class="hero-title fade-in-delay gradient-text-animate">Transform Your Academic Journey</h1>
+                <p class="hero-subtitle fade-in-delay-2">The all-in-one productivity OS that helps students manage assignments, track exams, organize notes, and achieve their goals—all in one beautiful interface.</p>
+                <div class="hero-buttons fade-in-delay-3">
+                    <button class="btn btn-primary btn-3d btn-glow" onclick="showAuth('signup')">
+                        <span>Start Free Today</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                    <button class="btn btn-secondary btn-3d" onclick="showAuth('login')">Sign In</button>
+                </div>
+                <div class="hero-stats fade-in-delay-4">
+                    <div class="stat-item">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Active Students</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Tasks Completed</div>
+                    </div>
                 </div>
             </div>
-            <div class="hero-background"></div>
+            <div class="hero-background animated-gradient"></div>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow">↓</div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+
+        <!-- Problem Statement Section -->
+        <section class="problem-section" data-scroll-animate>
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">The Problem</span>
+                    <h2 class="section-title-large">Students Are Overwhelmed</h2>
+                </div>
+                <div class="problem-grid">
+                    <div class="problem-card" data-scroll-animate>
+                        <div class="problem-icon">😰</div>
+                        <h3>Scattered Tools</h3>
+                        <p>Juggling between 5+ apps for assignments, notes, and schedules</p>
+                    </div>
+                    <div class="problem-card" data-scroll-animate>
+                        <div class="problem-icon">⏰</div>
+                        <h3>Missed Deadlines</h3>
+                        <p>No centralized system leads to forgotten assignments and poor grades</p>
+                    </div>
+                    <div class="problem-card" data-scroll-animate>
+                        <div class="problem-icon">📉</div>
+                        <h3>No Progress Tracking</h3>
+                        <p>Can't visualize productivity or measure academic improvement</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section class="solution-section" data-scroll-animate>
+            <div class="container">
+                <div class="solution-content">
+                    <div class="solution-text">
+                        <span class="section-tag">The Solution</span>
+                        <h2 class="section-title-large">One Platform. Everything Organized.</h2>
+                        <p class="solution-description">Student Productivity OS brings all your academic tools into one seamless, beautiful interface. No more app switching. No more chaos. Just pure productivity.</p>
+                        <ul class="solution-benefits">
+                            <li>✓ Unified dashboard for all academic tasks</li>
+                            <li>✓ Smart reminders and deadline tracking</li>
+                            <li>✓ Visual analytics and progress insights</li>
+                            <li>✓ Focus timer with Pomodoro technique</li>
+                        </ul>
+                    </div>
+                    <div class="solution-visual">
+                        <div class="floating-card card-1">📚 Assignments</div>
+                        <div class="floating-card card-2">📝 Exams</div>
+                        <div class="floating-card card-3">📓 Notes</div>
+                        <div class="floating-card card-4">🎯 Goals</div>
+                        <div class="center-icon">→</div>
+                        <div class="unified-card">🎓 Student OS</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Features Section -->
-        <section class="features">
+        <section class="features" data-scroll-animate>
             <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Features</span>
+                    <h2 class="section-title-large">Everything You Need to Excel</h2>
+                    <p class="section-description">Powerful tools designed specifically for student success</p>
+                </div>
                 <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">📚</div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">📚</div>
                         <h3>Smart Assignment Tracker</h3>
-                        <p>Never miss a deadline with intelligent tracking and reminders</p>
+                        <p>Never miss a deadline with intelligent tracking, priority sorting, and automatic reminders</p>
+                        <div class="feature-badge">Most Popular</div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">⏰</div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">⏰</div>
                         <h3>Exam Countdown System</h3>
-                        <p>Stay prepared with visual countdowns and progress tracking</p>
+                        <p>Stay prepared with visual countdowns, progress tracking, and study schedule planning</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🎯</div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">🎯</div>
                         <h3>Focus Study Timer</h3>
-                        <p>Boost productivity with Pomodoro technique and session tracking</p>
+                        <p>Boost productivity with Pomodoro technique, session tracking, and focus analytics</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">📊</div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">📊</div>
                         <h3>Productivity Analytics</h3>
-                        <p>Visualize your progress with beautiful charts and insights</p>
+                        <p>Visualize your progress with beautiful charts, insights, and performance metrics</p>
+                    </div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">📓</div>
+                        <h3>Smart Notes System</h3>
+                        <p>Organize notes by subject, search instantly, and access from anywhere</p>
+                    </div>
+                    <div class="feature-card holographic hover-lift" data-scroll-animate>
+                        <div class="feature-icon-large">🏆</div>
+                        <h3>Goal Achievement</h3>
+                        <p>Set academic goals, track progress, and celebrate milestones</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D Study Environment Section -->
+        <section class="study-environment-section" data-scroll-animate>
+            <div id="studyEnvironment3d" class="study-3d-container"></div>
+            <div class="study-overlay-content">
+                <span class="section-tag">Immersive Experience</span>
+                <h2 class="section-title">Your Digital Study Space</h2>
+                <p class="section-subtitle">Experience productivity in a beautiful 3D environment designed for focus and flow</p>
+            </div>
+        </section>
+
+        <!-- Demo Preview Section -->
+        <section class="demo-section" data-scroll-animate>
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">See It In Action</span>
+                    <h2 class="section-title-large">Beautiful. Intuitive. Powerful.</h2>
+                </div>
+                <div class="demo-preview">
+                    <div class="demo-mockup">
+                        <div class="mockup-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-url">studentos.app/dashboard</div>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-sidebar">
+                                    <div class="mockup-nav-item active">Dashboard</div>
+                                    <div class="mockup-nav-item">Assignments</div>
+                                    <div class="mockup-nav-item">Exams</div>
+                                    <div class="mockup-nav-item">Notes</div>
+                                </div>
+                                <div class="mockup-main">
+                                    <div class="mockup-stats">
+                                        <div class="mockup-stat-card"></div>
+                                        <div class="mockup-stat-card"></div>
+                                        <div class="mockup-stat-card"></div>
+                                    </div>
+                                    <div class="mockup-chart"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Why Choose Section -->
-        <section class="why-choose">
+        <section class="why-choose" data-scroll-animate>
             <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Why Choose Us</span>
+                    <h2 class="section-title-large">Built Different</h2>
+                </div>
                 <div class="why-grid">
-                    <div class="why-card">
+                    <div class="why-card" data-scroll-animate>
+                        <div class="why-number">01</div>
                         <h3>✨ Clean Minimal Design</h3>
-                        <p>Beautiful interface that helps you focus on what matters</p>
+                        <p>Beautiful interface inspired by Apple and Notion that helps you focus on what matters most</p>
                     </div>
-                    <div class="why-card">
+                    <div class="why-card" data-scroll-animate>
+                        <div class="why-number">02</div>
                         <h3>🎓 Built for Students</h3>
-                        <p>Every feature designed specifically for academic success</p>
+                        <p>Every feature designed specifically for academic success based on real student feedback</p>
                     </div>
-                    <div class="why-card">
+                    <div class="why-card" data-scroll-animate>
+                        <div class="why-number">03</div>
                         <h3>🚀 AI-Ready Future</h3>
-                        <p>Scalable architecture ready for intelligent features</p>
+                        <p>Scalable architecture ready for intelligent features, smart suggestions, and automation</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section class="impact-section" data-scroll-animate>
+            <div class="container">
+                <div class="impact-content">
+                    <div class="impact-text">
+                        <span class="section-tag">Real Impact</span>
+                        <h2 class="section-title-large">Transforming Student Lives</h2>
+                        <div class="impact-stats-large">
+                            <div class="impact-stat">
+                                <div class="impact-number">40%</div>
+                                <div class="impact-label">Increase in Productivity</div>
+                            </div>
+                            <div class="impact-stat">
+                                <div class="impact-number">95%</div>
+                                <div class="impact-label">On-Time Submissions</div>
+                            </div>
+                            <div class="impact-stat">
+                                <div class="impact-number">3.5hrs</div>
+                                <div class="impact-label">Saved Per Week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"This app completely changed how I manage my studies. I went from stressed and disorganized to confident and in control. My GPA improved by 0.5 points!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍🎓</div>
+                            <div class="author-info">
+                                <div class="author-name">Alex Chen</div>
+                                <div class="author-title">Computer Science, MIT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section" data-scroll-animate>
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title">Ready to Transform Your Academic Life?</h2>
+                    <p class="cta-subtitle">Join thousands of students who are already achieving more with Student Productivity OS</p>
+                    <button class="btn btn-primary btn-3d btn-glow btn-large" onclick="showAuth('signup')">
+                        <span>Get Started Free</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                    <p class="cta-note">No credit card required • Free forever • 2 minute setup</p>
                 </div>
             </div>
         </section>
@@ -538,6 +741,8 @@
 
     <script src="utils/storage.js"></script>
     <script src="utils/helpers.js"></script>
+    <script src="components/animations.js"></script>
+    <script src="components/3d-scene.js"></script>
     <script src="components/auth.js"></script>
     <script src="components/dashboard.js"></script>
     <script src="components/assignments.js"></script>

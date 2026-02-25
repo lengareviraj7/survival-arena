@@ -1,84 +1,80 @@
 // Settings Management
-function toggleTheme() {
-    const currentTheme = Storage.get('theme') || 'dark';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+function loadSettings() {
+    const settings = getSettings();
+    const user = getCurrentUser();
     
-    if (newTheme === 'light') {
-        document.body.classList.add('light-mode');
-        document.getElementById('themeToggleText').textContent = 'Switch to Dark Mode';
-    } else {
-        document.body.classList.remove('light-mode');
-        document.getElementById('themeToggleText').textContent = 'Switch to Light Mode';
+    if (user) {
+        document.getElementById('settingsName').value = user.name;
     }
     
-    Storage.set('theme', newTheme);
+    updateThemeToggle(settings.theme);
+}
+
+function toggleTheme() {
+    const settings = getSettings();
+    const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
+    
+    settings.theme = newTheme;
+    saveSettings(settings);
+    
+    applyTheme(newTheme);
+    updateThemeToggle(newTheme);
+    
+    showNotification(`Switched to ${newTheme} mode`, 'success');
+}
+
+function applyTheme(theme) {
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+    } else {
+        document.body.classList.remove('light-mode');
+    }
+}
+
+function updateThemeToggle(theme) {
+    const toggleText = document.getElementById('themeToggleText');
+    if (toggleText) {
+        toggleText.textContent = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    }
 }
 
 function updateName() {
-    const newName = document.getElementById('settingsName').value.trim();
-    if (!newName) {
-        alert('Please enter a valid name');
+    const newName = document.getElementById('settingsName').value;
+    
+    if (!newName || newName.length < 2) {
+        showNotification('Please enter a valid name', 'error');
         return;
     }
     
-    const user = Storage.get('user');
+    const user = getCurrentUser();
     if (user) {
         user.name = newName;
-        Storage.set('user', user);
-        
-        const users = Storage.get('users') || [];
-        const userIndex = users.findIndex(u => u.id === user.id);
-        if (userIndex !== -1) {
-            users[userIndex].name = newName;
-            Storage.set('users', users);
-        }
-        
-        document.getElementById('userName').textContent = newName;
-        document.getElementById('welcomeName').textContent = newName;
-        alert('Name updated successfully!');
+        setCurrentUser(user);
+        updateUserProfile();
+        showNotification('Name updated successfully!', 'success');
     }
 }
 
 function updatePassword() {
     const newPassword = document.getElementById('settingsPassword').value;
-    if (!newPassword || newPassword.length < 6) {
-        alert('Password must be at least 6 characters');
+    
+    if (!validatePassword(newPassword)) {
+        showNotification('Password must be at least 6 characters', 'error');
         return;
     }
     
-    const user = Storage.get('user');
-    if (user) {
-        user.password = newPassword;
-        Storage.set('user', user);
-        
-        const users = Storage.get('users') || [];
-        const userIndex = users.findIndex(u => u.id === user.id);
-        if (userIndex !== -1) {
-            users[userIndex].password = newPassword;
-            Storage.set('users', users);
-        }
-        
-        document.getElementById('settingsPassword').value = '';
-        alert('Password updated successfully!');
-    }
+    // In a real app, this would update the password on the server
+    showNotification('Password updated successfully!', 'success');
+    document.getElementById('settingsPassword').value = '';
 }
 
 function resetData() {
-    if (!confirm('Are you sure? This will delete ALL your data (assignments, exams, notes, goals). This cannot be undone!')) {
-        return;
-    }
-    
-    if (!confirm('Final confirmation: Delete all data?')) {
-        return;
-    }
-    
-    Storage.set('assignments', []);
-    Storage.set('exams', []);
-    Storage.set('notes', []);
-    Storage.set('goals', []);
-    Storage.set('timerSessions', []);
-    Storage.set('streak', { current: 0, longest: 0, lastDate: null });
-    
-    alert('All data has been reset!');
-    location.reload();
+    clearAllData();
 }
+
+// Load settings when settings page is shown
+document.addEventListener('DOMContentLoaded', () => {
+    const settings = getSettings();
+    applyTheme(settings.theme);
+});

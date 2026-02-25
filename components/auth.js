@@ -1,29 +1,4 @@
 // Authentication Functions
-function showAuth(type) {
-    document.getElementById('landingPage').classList.add('hidden');
-    document.getElementById('authPage').classList.remove('hidden');
-    
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('signupForm').classList.add('hidden');
-    document.getElementById('forgotForm').classList.add('hidden');
-    
-    if (type === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-    } else if (type === 'signup') {
-        document.getElementById('signupForm').classList.remove('hidden');
-    }
-}
-
-function showLanding() {
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('landingPage').classList.remove('hidden');
-}
-
-function showForgotPassword() {
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('signupForm').classList.add('hidden');
-    document.getElementById('forgotForm').classList.remove('hidden');
-}
 
 function handleLogin(event) {
     event.preventDefault();
@@ -31,16 +6,29 @@ function handleLogin(event) {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     
-    // Simple validation (in production, this would be server-side)
-    const users = Storage.get('users') || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        Storage.set('user', user);
-        showDashboard();
-    } else {
-        alert('Invalid credentials. For demo, just create an account!');
+    if (!validateEmail(email)) {
+        showNotification('Please enter a valid email', 'error');
+        return;
     }
+    
+    if (!validatePassword(password)) {
+        showNotification('Password must be at least 6 characters', 'error');
+        return;
+    }
+    
+    // For demo purposes, accept any valid email/password
+    const user = {
+        name: email.split('@')[0],
+        email: email,
+        joinedDate: new Date().toISOString()
+    };
+    
+    setCurrentUser(user);
+    showNotification('Login successful!', 'success');
+    
+    setTimeout(() => {
+        showDashboard();
+    }, 500);
 }
 
 function handleSignup(event) {
@@ -50,45 +38,87 @@ function handleSignup(event) {
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
     
-    const users = Storage.get('users') || [];
-    
-    if (users.find(u => u.email === email)) {
-        alert('Email already exists!');
+    if (!name || name.length < 2) {
+        showNotification('Please enter your full name', 'error');
         return;
     }
     
-    const newUser = { id: generateId(), name, email, password };
-    users.push(newUser);
-    Storage.set('users', users);
-    Storage.set('user', newUser);
+    if (!validateEmail(email)) {
+        showNotification('Please enter a valid email', 'error');
+        return;
+    }
     
-    showDashboard();
+    if (!validatePassword(password)) {
+        showNotification('Password must be at least 6 characters', 'error');
+        return;
+    }
+    
+    const user = {
+        name: name,
+        email: email,
+        joinedDate: new Date().toISOString()
+    };
+    
+    setCurrentUser(user);
+    showNotification('Account created successfully!', 'success');
+    
+    // Add welcome data
+    addWelcomeData();
+    
+    setTimeout(() => {
+        showDashboard();
+    }, 500);
 }
 
 function handleForgotPassword(event) {
     event.preventDefault();
-    alert('Password reset link sent! (Demo mode)');
-    showAuth('login');
+    
+    const email = document.getElementById('forgotEmail').value;
+    
+    if (!validateEmail(email)) {
+        showNotification('Please enter a valid email', 'error');
+        return;
+    }
+    
+    showNotification('Password reset link sent to your email!', 'success');
+    
+    setTimeout(() => {
+        showAuth('login');
+    }, 2000);
 }
 
 function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
-        Storage.set('user', null);
-        document.getElementById('dashboard').classList.add('hidden');
-        document.getElementById('landingPage').classList.remove('hidden');
+        clearCurrentUser();
+        showNotification('Logged out successfully', 'success');
+        setTimeout(() => {
+            showLanding();
+        }, 500);
     }
 }
 
-function showDashboard() {
-    const user = Storage.get('user');
-    if (!user) return;
+// Add welcome data for new users
+function addWelcomeData() {
+    // Add sample assignment
+    addAssignment({
+        title: 'Welcome to Student Productivity OS!',
+        subject: 'Getting Started',
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        description: 'Explore the features and customize your dashboard'
+    });
     
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
+    // Add sample goal
+    addGoal({
+        title: 'Complete First Week',
+        type: 'academic',
+        targetDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        progress: 0
+    });
     
-    document.getElementById('userName').textContent = user.name;
-    document.getElementById('welcomeName').textContent = user.name;
-    document.getElementById('settingsName').value = user.name;
-    
-    loadDashboardData();
+    // Add sample note
+    addNote({
+        title: 'Quick Tips',
+        subject: 'Getting Started',
+        content: '1. Add your assignments and exams\n2. Use the study timer for focused work\n3. Track your goals and progress\n4. Check analytics to see your productivity trends'
+    });
 }

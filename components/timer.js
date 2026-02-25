@@ -1,12 +1,13 @@
 // Study Timer (Pomodoro)
+
 let timerInterval = null;
-let timerSeconds = 25 * 60;
-let isTimerRunning = false;
+let timerSeconds = 25 * 60; // 25 minutes default
+let timerRunning = false;
 
 function startTimer() {
-    if (isTimerRunning) return;
+    if (timerRunning) return;
     
-    isTimerRunning = true;
+    timerRunning = true;
     document.getElementById('timerStart').disabled = true;
     document.getElementById('timerPause').disabled = false;
     
@@ -15,13 +16,15 @@ function startTimer() {
         updateTimerDisplay();
         
         if (timerSeconds <= 0) {
-            completeSession();
+            completeTimer();
         }
     }, 1000);
 }
 
 function pauseTimer() {
-    isTimerRunning = false;
+    if (!timerRunning) return;
+    
+    timerRunning = false;
     clearInterval(timerInterval);
     document.getElementById('timerStart').disabled = false;
     document.getElementById('timerPause').disabled = true;
@@ -33,78 +36,72 @@ function resetTimer() {
     updateTimerDisplay();
 }
 
-function updateTimerDisplay() {
-    const minutes = Math.floor(timerSeconds / 60);
-    const seconds = timerSeconds % 60;
-    document.getElementById('timerDisplay').textContent = 
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function completeSession() {
+function completeTimer() {
     pauseTimer();
     
-    // Play sound (browser notification)
-    if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Study Session Complete!', {
-            body: 'Great job! Take a short break.',
-            icon: '🎯'
-        });
-    }
+    // Play sound (optional)
+    playTimerSound();
     
-    // Save session
-    const sessions = Storage.get('timerSessions') || [];
-    sessions.push({
-        id: generateId(),
-        duration: 25,
-        date: new Date().toISOString()
-    });
-    Storage.set('timerSessions', sessions);
+    // Update stats
+    const stats = updateTimerStats(25);
+    updateTimerStatsDisplay(stats);
     
-    // Update streak
-    updateStudyStreak();
+    // Show notification
+    showNotification('Pomodoro session completed! Great work! 🎉', 'success');
     
-    // Update display
-    updateTimerStats();
-    updateDashboardData();
-    
-    alert('🎉 Session complete! Great work!');
-    resetTimer();
+    // Reset timer
+    timerSeconds = 25 * 60;
+    updateTimerDisplay();
 }
 
-function updateTimerStats() {
-    const sessions = Storage.get('timerSessions') || [];
-    const today = new Date().toDateString();
-    const todaySessions = sessions.filter(s => new Date(s.date).toDateString() === today);
+function updateTimerDisplay() {
+    const display = document.getElementById('timerDisplay');
+    display.textContent = formatTime(timerSeconds);
     
-    document.getElementById('sessionsToday').textContent = todaySessions.length;
+    // Update circle progress (optional visual enhancement)
+    const progress = ((25 * 60 - timerSeconds) / (25 * 60)) * 100;
+    const circle = document.querySelector('.timer-circle');
+    if (circle) {
+        circle.style.background = `conic-gradient(var(--accent-1) ${progress}%, var(--glass-bg) ${progress}%)`;
+    }
+}
+
+function updateTimerStatsDisplay(stats) {
+    document.getElementById('sessionsToday').textContent = stats.sessionsToday;
     
-    const totalMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+    const hours = Math.floor(stats.totalMinutes / 60);
+    const minutes = stats.totalMinutes % 60;
     document.getElementById('totalFocusTime').textContent = `${hours}h ${minutes}m`;
 }
 
-function updateStudyStreak() {
-    const streak = Storage.get('streak') || { current: 0, longest: 0, lastDate: null };
-    const today = new Date().toDateString();
+function playTimerSound() {
+    // Create a simple beep sound
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
     
-    if (streak.lastDate !== today) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        
-        if (streak.lastDate === yesterday.toDateString()) {
-            streak.current++;
-        } else {
-            streak.current = 1;
-        }
-        
-        streak.lastDate = today;
-        streak.longest = Math.max(streak.longest, streak.current);
-        Storage.set('streak', streak);
-    }
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
 }
 
-// Request notification permission
-if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
+// Load timer stats on page load
+function loadTimerStats() {
+    const stats = getTimerStats();
+    updateTimerStatsDisplay(stats);
 }
+
+// Initialize timer when timer page is shown
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('timerPage')) {
+        loadTimerStats();
+    }
+});

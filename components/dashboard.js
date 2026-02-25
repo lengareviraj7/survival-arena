@@ -1,43 +1,44 @@
 // Dashboard Functions
+
 function loadDashboardData() {
     updateOverviewCards();
     updateUpcomingDeadlines();
     updateExamCountdown();
-    updateStreak();
+    updateStreakWidget();
     updateBadges();
-    document.getElementById('motivationalQuote').textContent = getRandomQuote();
+    updateMotivationalQuote();
 }
 
 function updateOverviewCards() {
-    const assignments = Storage.get('assignments') || [];
-    const exams = Storage.get('exams') || [];
-    const sessions = Storage.get('timerSessions') || [];
+    const assignments = getAssignments();
+    const exams = getExams();
+    const timerStats = getTimerStats();
+    const productivityScore = calculateProductivityScore();
     
+    // Total Assignments
     const totalAssignments = assignments.length;
+    document.getElementById('totalAssignments').textContent = totalAssignments;
+    animateCounter(document.getElementById('totalAssignments'), totalAssignments, 1000);
+    
+    // Upcoming Exams
     const upcomingExams = exams.filter(e => new Date(e.date) > new Date()).length;
+    document.getElementById('upcomingExams').textContent = upcomingExams;
+    animateCounter(document.getElementById('upcomingExams'), upcomingExams, 1000);
     
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekSessions = sessions.filter(s => new Date(s.date) > weekAgo);
-    const studyMinutes = weekSessions.reduce((sum, s) => sum + s.duration, 0);
-    const studyHours = Math.floor(studyMinutes / 60);
+    // Study Hours This Week
+    const weeklyHours = Math.floor(timerStats.totalMinutes / 60);
+    document.getElementById('studyHours').textContent = weeklyHours + 'h';
     
-    const completedAssignments = assignments.filter(a => a.completed).length;
-    const productivityScore = totalAssignments > 0 
-        ? Math.round((completedAssignments / totalAssignments) * 100) 
-        : 0;
-    
-    animateNumber(document.getElementById('totalAssignments'), totalAssignments);
-    animateNumber(document.getElementById('upcomingExams'), upcomingExams);
-    document.getElementById('studyHours').textContent = studyHours + 'h';
-    animateNumber(document.getElementById('productivityScore'), productivityScore);
-    document.getElementById('productivityScore').textContent += '%';
+    // Productivity Score
+    document.getElementById('productivityScore').textContent = productivityScore + '%';
+    animateCounter(document.getElementById('productivityScore'), productivityScore, 1500);
 }
 
 function updateUpcomingDeadlines() {
-    const assignments = Storage.get('assignments') || [];
+    const assignments = getAssignments();
     const container = document.getElementById('upcomingDeadlines');
     
+    // Filter upcoming and not completed
     const upcoming = assignments
         .filter(a => !a.completed && new Date(a.deadline) > new Date())
         .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
@@ -48,19 +49,19 @@ function updateUpcomingDeadlines() {
         return;
     }
     
-    container.innerHTML = upcoming.map(a => `
+    container.innerHTML = upcoming.map(assignment => `
         <div class="deadline-item">
             <div class="deadline-info">
-                <h4>${a.title}</h4>
-                <p>${a.subject} • Due ${formatDate(a.deadline)}</p>
+                <h4>${escapeHtml(assignment.title)}</h4>
+                <p>${escapeHtml(assignment.subject)} • ${getTimeUntil(assignment.deadline)}</p>
             </div>
-            <span class="deadline-badge badge-pending">${getDaysUntil(a.deadline)}d left</span>
+            <span class="deadline-badge badge-pending">${formatDate(assignment.deadline)}</span>
         </div>
     `).join('');
 }
 
 function updateExamCountdown() {
-    const exams = Storage.get('exams') || [];
+    const exams = getExams();
     const container = document.getElementById('examCountdown');
     
     const upcoming = exams
@@ -73,15 +74,16 @@ function updateExamCountdown() {
         return;
     }
     
-    container.innerHTML = upcoming.map(e => {
-        const daysLeft = getDaysUntil(e.date);
-        const progress = Math.max(0, 100 - (daysLeft * 2));
+    container.innerHTML = upcoming.map(exam => {
+        const daysUntil = getDaysUntil(exam.date);
+        const progress = Math.max(0, 100 - (daysUntil * 5));
+        
         return `
             <div class="exam-item">
                 <div class="exam-info">
-                    <h4>${e.title}</h4>
-                    <p>${e.subject}</p>
-                    <p class="exam-countdown">${daysLeft} days left</p>
+                    <h4>${escapeHtml(exam.title)}</h4>
+                    <p>${escapeHtml(exam.subject)}</p>
+                    <div class="exam-countdown">${daysUntil} days</div>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${progress}%"></div>
@@ -91,69 +93,35 @@ function updateExamCountdown() {
     }).join('');
 }
 
-function updateStreak() {
-    const streak = Storage.get('streak') || { current: 0, longest: 0 };
-    document.getElementById('currentStreak').textContent = `${streak.current} days 🔥`;
-    document.getElementById('longestStreak').textContent = `${streak.longest} days 🏆`;
+function updateStreakWidget() {
+    const stats = getTimerStats();
+    document.getElementById('currentStreak').textContent = `${stats.currentStreak} days 🔥`;
+    document.getElementById('longestStreak').textContent = `${stats.longestStreak} days 🏆`;
 }
 
 function updateBadges() {
-    const assignments = Storage.get('assignments') || [];
-    const sessions = Storage.get('timerSessions') || [];
-    const streak = Storage.get('streak') || { current: 0 };
+    const assignments = getAssignments();
+    const timerStats = getTimerStats();
+    const container = document.getElementById('badgesContainer');
     
-    const badges = ['🌟 Beginner'];
+    const badges = [];
     
-    if (assignments.filter(a => a.completed).length >= 5) badges.push('📚 Achiever');
-    if (assignments.filter(a => a.completed).length >= 20) badges.push('🏆 Master');
-    if (sessions.length >= 10) badges.push('⏱️ Focused');
-    if (streak.current >= 7) badges.push('🔥 Consistent');
-    if (streak.current >= 30) badges.push('💎 Dedicated');
+    // Beginner badge
+    badges.push('🌟 Beginner');
     
-    document.getElementById('badgesContainer').innerHTML = badges.map(b => 
-        `<div class="badge">${b}</div>`
-    ).join('');
-}
-
-function showSection(section) {
-    document.querySelectorAll('.section-content').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    // Assignment badges
+    const completedCount = assignments.filter(a => a.completed).length;
+    if (completedCount >= 5) badges.push('📚 Task Master');
+    if (completedCount >= 20) badges.push('🏆 Achiever');
     
-    const sectionMap = {
-        'dashboard': 'dashboardHome',
-        'assignments': 'assignmentsPage',
-        'exams': 'examsPage',
-        'notes': 'notesPage',
-        'goals': 'goalsPage',
-        'timer': 'timerPage',
-        'analytics': 'analyticsPage',
-        'settings': 'settingsPage'
-    };
+    // Study time badges
+    const totalHours = Math.floor(timerStats.totalMinutes / 60);
+    if (totalHours >= 10) badges.push('⏱️ Focused');
+    if (totalHours >= 50) badges.push('🔥 Dedicated');
     
-    document.getElementById(sectionMap[section]).classList.remove('hidden');
-    event.target.closest('.nav-item').classList.add('active');
+    // Streak badges
+    if (timerStats.currentStreak >= 7) badges.push('📅 Week Warrior');
+    if (timerStats.currentStreak >= 30) badges.push('💪 Month Master');
     
-    const titles = {
-        'dashboard': 'Dashboard',
-        'assignments': 'Assignments',
-        'exams': 'Exams',
-        'notes': 'Notes',
-        'goals': 'Goals',
-        'timer': 'Study Timer',
-        'analytics': 'Analytics',
-        'settings': 'Settings'
-    };
-    document.getElementById('pageTitle').textContent = titles[section];
-    
-    if (section === 'assignments') loadAssignments();
-    if (section === 'exams') loadExams();
-    if (section === 'notes') loadNotes();
-    if (section === 'goals') loadGoals();
-    if (section === 'analytics') loadAnalytics();
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('collapsed');
-    sidebar.classList.toggle('active');
+    container.innerHTML = badges.map(badge => `<div class="badge">${badge}</div>`).join('');
 }

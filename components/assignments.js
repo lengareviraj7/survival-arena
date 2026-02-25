@@ -1,8 +1,9 @@
 // Assignments Management
+
 function loadAssignments() {
-    const assignments = Storage.get('assignments') || [];
+    const assignments = getAssignments();
     renderAssignments(assignments);
-    populateSubjectFilter();
+    updateFilterOptions();
 }
 
 function renderAssignments(assignments) {
@@ -13,143 +14,156 @@ function renderAssignments(assignments) {
         return;
     }
     
-    container.innerHTML = assignments.map(a => `
-        <div class="assignment-card ${a.completed ? 'completed' : ''}">
+    container.innerHTML = assignments.map(assignment => `
+        <div class="assignment-card ${assignment.completed ? 'completed' : ''}" data-id="${assignment.id}">
             <div class="assignment-info">
                 <div class="assignment-header">
-                    <h3 class="assignment-title">${a.title}</h3>
-                    <span class="subject-tag">${a.subject}</span>
+                    <input type="checkbox" 
+                           ${assignment.completed ? 'checked' : ''} 
+                           onchange="toggleAssignmentComplete('${assignment.id}')"
+                           class="assignment-checkbox">
+                    <h3 class="assignment-title ${assignment.completed ? 'line-through' : ''}">${escapeHtml(assignment.title)}</h3>
+                    <span class="subject-tag" style="background-color: ${getSubjectColor(assignment.subject)}20; color: ${getSubjectColor(assignment.subject)}">${escapeHtml(assignment.subject)}</span>
                 </div>
-                <p class="assignment-meta">Due: ${formatDate(a.deadline)} • ${getDaysUntil(a.deadline)} days left</p>
-                ${a.description ? `<p class="assignment-description">${a.description}</p>` : ''}
+                <p class="assignment-meta">
+                    Due: ${formatDate(assignment.deadline)} • ${getTimeUntil(assignment.deadline)}
+                </p>
+                ${assignment.description ? `<p class="assignment-description">${escapeHtml(assignment.description)}</p>` : ''}
             </div>
             <div class="assignment-actions">
-                <button class="btn-icon" onclick="toggleAssignment('${a.id}')" title="${a.completed ? 'Mark Incomplete' : 'Mark Complete'}">
-                    ${a.completed ? '✓' : '○'}
-                </button>
-                <button class="btn-icon" onclick="editAssignment('${a.id}')" title="Edit">✏️</button>
-                <button class="btn-icon" onclick="deleteAssignment('${a.id}')" title="Delete">🗑️</button>
+                <button class="btn-icon" onclick="editAssignment('${assignment.id}')" title="Edit">✏️</button>
+                <button class="btn-icon" onclick="deleteAssignmentConfirm('${assignment.id}')" title="Delete">🗑️</button>
             </div>
         </div>
     `).join('');
-}
-
-function showAddAssignment() {
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('addAssignmentModal').classList.remove('hidden');
+    
+    // Add stagger animation
+    staggerAnimation('.assignment-card', 50);
 }
 
 function addAssignment(event) {
     event.preventDefault();
     
+    const title = document.getElementById('assignmentTitle').value;
+    const subject = document.getElementById('assignmentSubject').value;
+    const deadline = document.getElementById('assignmentDeadline').value;
+    const description = document.getElementById('assignmentDescription').value;
+    
     const assignment = {
-        id: generateId(),
-        title: document.getElementById('assignmentTitle').value,
-        subject: document.getElementById('assignmentSubject').value,
-        deadline: document.getElementById('assignmentDeadline').value,
-        description: document.getElementById('assignmentDescription').value,
-        completed: false,
-        createdAt: new Date().toISOString()
+        title,
+        subject,
+        deadline: new Date(deadline).toISOString(),
+        description
     };
     
-    const assignments = Storage.get('assignments') || [];
-    assignments.push(assignment);
-    Storage.set('assignments', assignments);
+    addAssignment(assignment);
+    showNotification('Assignment added successfully!', 'success');
     
     closeModal();
     loadAssignments();
-    updateDashboardData();
+    loadDashboardData();
+    
+    // Reset form
+    event.target.reset();
 }
 
-function toggleAssignment(id) {
-    const assignments = Storage.get('assignments') || [];
+function toggleAssignmentComplete(id) {
+    const assignments = getAssignments();
     const assignment = assignments.find(a => a.id === id);
+    
     if (assignment) {
         assignment.completed = !assignment.completed;
-        Storage.set('assignments', assignments);
+        updateAssignment(id, { completed: assignment.completed });
         loadAssignments();
-        updateDashboardData();
+        loadDashboardData();
+        
+        if (assignment.completed) {
+            showNotification('Assignment completed! 🎉', 'success');
+        }
+    }
+}
+
+function deleteAssignmentConfirm(id) {
+    if (confirm('Are you sure you want to delete this assignment?')) {
+        deleteAssignment(id);
+        showNotification('Assignment deleted', 'info');
+        loadAssignments();
+        loadDashboardData();
     }
 }
 
 function editAssignment(id) {
-    const assignments = Storage.get('assignments') || [];
-    const assignment = assignments.find(a => a.id === id);
+    const assignment = getAssignments().find(a => a.id === id);
     if (!assignment) return;
     
+    // Populate form with existing data
     document.getElementById('assignmentTitle').value = assignment.title;
     document.getElementById('assignmentSubject').value = assignment.subject;
-    document.getElementById('assignmentDeadline').value = assignment.deadline;
+    document.getElementById('assignmentDeadline').value = assignment.deadline.split('T')[0];
     document.getElementById('assignmentDescription').value = assignment.description || '';
     
-    showAddAssignment();
-    
+    // Change form submit to update
     const form = document.querySelector('#addAssignmentModal form');
     form.onsubmit = (e) => {
         e.preventDefault();
-        assignment.title = document.getElementById('assignmentTitle').value;
-        assignment.subject = document.getElementById('assignmentSubject').value;
-        assignment.deadline = document.getElementById('assignmentDeadline').value;
-        assignment.description = document.getElementById('assignmentDescription').value;
-        Storage.set('assignments', assignments);
+        updateAssignment(id, {
+            title: document.getElementById('assignmentTitle').value,
+            subject: document.getElementById('assignmentSubject').value,
+            deadline: new Date(document.getElementById('assignmentDeadline').value).toISOString(),
+            description: document.getElementById('assignmentDescription').value
+        });
+        showNotification('Assignment updated!', 'success');
         closeModal();
         loadAssignments();
-        updateDashboardData();
         form.onsubmit = addAssignment;
     };
-}
-
-function deleteAssignment(id) {
-    if (!confirm('Delete this assignment?')) return;
     
-    let assignments = Storage.get('assignments') || [];
-    assignments = assignments.filter(a => a.id !== id);
-    Storage.set('assignments', assignments);
-    loadAssignments();
-    updateDashboardData();
+    showModal('addAssignmentModal');
 }
 
-function populateSubjectFilter() {
-    const assignments = Storage.get('assignments') || [];
+function updateFilterOptions() {
+    const assignments = getAssignments();
     const subjects = [...new Set(assignments.map(a => a.subject))];
-    const filter = document.getElementById('assignmentFilter');
+    const filterSelect = document.getElementById('assignmentFilter');
     
-    filter.innerHTML = '<option value="all">All Subjects</option>' +
-        subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    filterSelect.innerHTML = '<option value="all">All Subjects</option>' +
+        subjects.map(subject => `<option value="${subject}">${subject}</option>`).join('');
 }
 
 function filterAssignments() {
     const filter = document.getElementById('assignmentFilter').value;
-    const search = document.getElementById('assignmentSearch').value.toLowerCase();
-    let assignments = Storage.get('assignments') || [];
+    let assignments = getAssignments();
     
     if (filter !== 'all') {
         assignments = assignments.filter(a => a.subject === filter);
-    }
-    
-    if (search) {
-        assignments = assignments.filter(a => 
-            a.title.toLowerCase().includes(search) || 
-            a.subject.toLowerCase().includes(search)
-        );
     }
     
     renderAssignments(assignments);
 }
 
 function sortAssignments() {
-    const sort = document.getElementById('assignmentSort').value;
-    let assignments = Storage.get('assignments') || [];
+    const sortBy = document.getElementById('assignmentSort').value;
+    let assignments = getAssignments();
     
-    if (sort === 'deadline') {
-        assignments.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-    } else if (sort === 'subject') {
-        assignments.sort((a, b) => a.subject.localeCompare(b.subject));
-    } else if (sort === 'status') {
+    if (sortBy === 'deadline') {
+        assignments = sortByDate(assignments, 'deadline', true);
+    } else if (sortBy === 'subject') {
+        assignments = sortByProperty(assignments, 'subject', true);
+    } else if (sortBy === 'status') {
         assignments.sort((a, b) => a.completed - b.completed);
     }
     
     renderAssignments(assignments);
 }
 
-document.getElementById('assignmentSearch')?.addEventListener('input', filterAssignments);
+// Search functionality
+document.getElementById('assignmentSearch')?.addEventListener('input', debounce((e) => {
+    const searchTerm = e.target.value;
+    let assignments = getAssignments();
+    
+    if (searchTerm) {
+        assignments = filterBySearch(assignments, searchTerm, ['title', 'subject', 'description']);
+    }
+    
+    renderAssignments(assignments);
+}, 300));

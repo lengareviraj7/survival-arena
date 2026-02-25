@@ -1,6 +1,7 @@
 // Exams Management
+
 function loadExams() {
-    const exams = Storage.get('exams') || [];
+    const exams = getExams();
     renderExams(exams);
 }
 
@@ -12,100 +13,66 @@ function renderExams(exams) {
         return;
     }
     
-    const upcoming = exams.filter(e => new Date(e.date) > new Date());
-    const past = exams.filter(e => new Date(e.date) <= new Date());
+    // Sort by date
+    const sortedExams = sortByDate(exams, 'date', true);
     
-    container.innerHTML = `
-        ${upcoming.length > 0 ? '<h3>Upcoming Exams</h3>' : ''}
-        ${upcoming.map(e => createExamCard(e)).join('')}
-        ${past.length > 0 ? '<h3 style="margin-top: 2rem;">Past Exams</h3>' : ''}
-        ${past.map(e => createExamCard(e, true)).join('')}
-    `;
-}
-
-function createExamCard(exam, isPast = false) {
-    const daysLeft = getDaysUntil(exam.date);
-    const progress = isPast ? 100 : Math.max(0, 100 - (daysLeft * 2));
+    container.innerHTML = sortedExams.map(exam => {
+        const daysUntil = getDaysUntil(exam.date);
+        const isPast = daysUntil < 0;
+        const progress = isPast ? 100 : Math.max(0, 100 - (daysUntil * 2));
+        
+        return `
+            <div class="exam-card ${isPast ? 'past-exam' : ''}" data-id="${exam.id}">
+                <div class="exam-header">
+                    <h3>${escapeHtml(exam.title)}</h3>
+                    <button class="btn-icon" onclick="deleteExamConfirm('${exam.id}')" title="Delete">🗑️</button>
+                </div>
+                <p class="exam-subject">${escapeHtml(exam.subject)}</p>
+                <p class="exam-date">${formatDateTime(exam.date)}</p>
+                ${!isPast ? `
+                    <div class="exam-countdown">${Math.abs(daysUntil)} days ${daysUntil >= 0 ? 'until' : 'ago'}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                ` : '<div class="exam-status">Completed</div>'}
+                ${exam.notes ? `<p class="exam-notes">${escapeHtml(exam.notes)}</p>` : ''}
+            </div>
+        `;
+    }).join('');
     
-    return `
-        <div class="exam-card">
-            <h3>${exam.title}</h3>
-            <p>${exam.subject}</p>
-            <p class="exam-countdown">${isPast ? 'Completed' : daysLeft + ' days left'}</p>
-            <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                ${new Date(exam.date).toLocaleString()}
-            </p>
-            ${exam.notes ? `<p style="margin-top: 1rem; color: var(--text-secondary);">${exam.notes}</p>` : ''}
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${progress}%"></div>
-            </div>
-            <div class="assignment-actions" style="margin-top: 1rem;">
-                <button class="btn-icon" onclick="editExam('${exam.id}')">✏️</button>
-                <button class="btn-icon" onclick="deleteExam('${exam.id}')">🗑️</button>
-            </div>
-        </div>
-    `;
-}
-
-function showAddExam() {
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('addExamModal').classList.remove('hidden');
+    staggerAnimation('.exam-card', 50);
 }
 
 function addExam(event) {
     event.preventDefault();
     
+    const title = document.getElementById('examTitle').value;
+    const subject = document.getElementById('examSubject').value;
+    const date = document.getElementById('examDate').value;
+    const notes = document.getElementById('examNotes').value;
+    
     const exam = {
-        id: generateId(),
-        title: document.getElementById('examTitle').value,
-        subject: document.getElementById('examSubject').value,
-        date: document.getElementById('examDate').value,
-        notes: document.getElementById('examNotes').value,
-        createdAt: new Date().toISOString()
+        title,
+        subject,
+        date: new Date(date).toISOString(),
+        notes
     };
     
-    const exams = Storage.get('exams') || [];
-    exams.push(exam);
-    Storage.set('exams', exams);
+    addExam(exam);
+    showNotification('Exam added successfully!', 'success');
     
     closeModal();
     loadExams();
-    updateDashboardData();
+    loadDashboardData();
+    
+    event.target.reset();
 }
 
-function editExam(id) {
-    const exams = Storage.get('exams') || [];
-    const exam = exams.find(e => e.id === id);
-    if (!exam) return;
-    
-    document.getElementById('examTitle').value = exam.title;
-    document.getElementById('examSubject').value = exam.subject;
-    document.getElementById('examDate').value = exam.date;
-    document.getElementById('examNotes').value = exam.notes || '';
-    
-    showAddExam();
-    
-    const form = document.querySelector('#addExamModal form');
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        exam.title = document.getElementById('examTitle').value;
-        exam.subject = document.getElementById('examSubject').value;
-        exam.date = document.getElementById('examDate').value;
-        exam.notes = document.getElementById('examNotes').value;
-        Storage.set('exams', exams);
-        closeModal();
+function deleteExamConfirm(id) {
+    if (confirm('Are you sure you want to delete this exam?')) {
+        deleteExam(id);
+        showNotification('Exam deleted', 'info');
         loadExams();
-        updateDashboardData();
-        form.onsubmit = addExam;
-    };
-}
-
-function deleteExam(id) {
-    if (!confirm('Delete this exam?')) return;
-    
-    let exams = Storage.get('exams') || [];
-    exams = exams.filter(e => e.id !== id);
-    Storage.set('exams', exams);
-    loadExams();
-    updateDashboardData();
+        loadDashboardData();
+    }
 }
