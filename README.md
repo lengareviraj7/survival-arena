@@ -1,226 +1,199 @@
-# Survival Arena 2026 — Quantum Core
+# 🎓 Student Productivity OS
 
-Ultra-premium, cinematic 3D scroll-driven experience built with Three.js.
+A premium, modern productivity dashboard designed specifically for students to manage assignments, track exams, organize notes, set goals, and boost academic performance—all in one beautiful interface.
 
-## 🎯 Features
+## ✨ Features
 
-### 3D Quantum Core Experience
-- **Physically-based rendering** with metallic materials and proper lighting
-- **6 cinematic scroll phases** with smooth interpolation
-- **Precision-engineered animations** - no chaos, only controlled motion
-- **Volumetric particles** creating infinite space illusion
-- **Real-time lighting system** with rim lights, key light, and spotlight sweep
-- **60fps performance** with hardware acceleration
+### 🎯 Core Functionality
+- **Smart Assignment Tracker** - Never miss a deadline with intelligent tracking and reminders
+- **Exam Countdown System** - Visual countdowns and progress tracking for upcoming exams
+- **Notes Organization** - Create, organize, and search notes by subject
+- **Goal Management** - Set academic and skill goals with progress tracking
+- **Focus Study Timer** - Pomodoro technique with session tracking
+- **Productivity Analytics** - Beautiful charts and insights into your study habits
 
-### Scroll Phases
+### 🎨 Design Highlights
+- **Immersive 3D Animations** - Three.js powered 3D scenes and floating elements
+- **Glassmorphism UI** - Modern glass-effect cards and panels
+- **Smooth Micro-interactions** - Hover effects, transitions, and animations
+- **Custom Animated Cursor** - Premium cursor with glow effect
+- **Particle System** - Subtle floating particles for ambiance
+- **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 
-1. **Activation (0-15%)** - Core floats in darkness with scanning light
-2. **Disassembly (15-35%)** - Symmetric panel separation with precision
-3. **Core Reveal (35-55%)** - Camera push, quantum sphere opens, energy flows
-4. **Intelligence (55-75%)** - AI modules highlight, scanning beams, data streams
-5. **Symmetry (75-90%)** - 8-degree camera orbit, perfect component spacing
-6. **Reassembly (90-100%)** - Components return, core seals, final pose
+### 🚀 Technical Features
+- **Local Storage** - All data saved locally in your browser
+- **No Backend Required** - Runs entirely in the browser
+- **Fast Performance** - Optimized for 60 FPS animations
+- **Keyboard Shortcuts** - Quick navigation and actions
+- **Dark/Light Mode** - Toggle between themes
+- **Export/Import Data** - Backup and restore your data
 
-### Components
+## 🎬 Demo
 
-- **Outer stabilizing ring** - Matte black titanium with subtle reflections
-- **6 segmented armor panels** - Symmetric separation with emissive edges
-- **Central quantum sphere** - Dark glass with internal energy swirl
-- **Energy core** - Animated glowing sphere with pulse effects
-- **Holographic rings** - Thin rotating UI elements with data streams
-- **Circuit veins** - Emissive lines connecting core to modules
-- **Levitation modules** - 4 magnetic cubes with green glow
-- **Particle field** - 500 ambient particles for depth
+Open `index.html` in your browser to see the app in action!
 
-### Advanced Features
-
-- **Smooth scroll mapping** with easeInOutCubic interpolation
-- **Lerp-based animation** for buttery transitions
-- **Text overlay system** with phase-based fade in/out
-- **Live leaderboard** with animated score counting
-- **Form validation** with inline error messages
-- **Fully responsive** with mobile hamburger menu
-- **Glass morphism navbar** with blur effects
-
-## 🚀 Quick Start
-
-### Option 1: 2D Canvas Version (Lightweight)
-```bash
-# Open in browser
-open index.html
-```
-
-### Option 2: 3D WebGL Version (Premium)
-```bash
-# Open in browser
-open index-3d.html
-```
-
-## 📁 File Structure
+## 📁 Project Structure
 
 ```
-├── index.html              # 2D canvas version
-├── index-3d.html          # 3D WebGL version (recommended)
-├── styles.css             # 2D styles
-├── styles-3d.css          # 3D styles
-├── script.js              # 2D canvas engine
-├── quantum-core.js        # 3D Three.js engine
-├── app-3d.js              # Application controller
+student-productivity-os/
+├── index.html              # Main HTML file
+├── styles/
+│   ├── main.css           # Core styles
+│   └── animations.css     # Animation styles
+├── components/
+│   ├── 3d-scene.js        # Three.js 3D scenes
+│   ├── animations.js      # Animation controllers
+│   ├── auth.js            # Authentication
+│   ├── dashboard.js       # Dashboard logic
+│   ├── assignments.js     # Assignment management
+│   ├── exams.js           # Exam management
+│   ├── notes.js           # Notes management
+│   ├── goals.js           # Goals management
+│   ├── timer.js           # Pomodoro timer
+│   ├── analytics.js       # Charts and analytics
+│   └── settings.js        # Settings management
+├── utils/
+│   ├── storage.js         # LocalStorage management
+│   └── helpers.js         # Utility functions
+├── app.js                 # Main application controller
 └── README.md              # This file
 ```
 
-## 🎨 Design System
+## 🛠️ Technologies Used
 
-### Colors
-- **Primary Background**: `#050505` (Pure void black)
-- **Secondary Background**: `#0A0A0C` (Deep space)
-- **Text Primary**: `rgba(255, 255, 255, 0.9)`
-- **Text Secondary**: `rgba(255, 255, 255, 0.6)`
-- **Accent Pink**: `#FF2E63` (Neon elimination)
-- **Accent Cyan**: `#08D9D6` (Electric quantum)
-- **Accent Green**: `#00FF88` (Success state)
+- **HTML5** - Semantic markup
+- **CSS3** - Modern styling with animations
+- **JavaScript (ES6+)** - Vanilla JS, no frameworks
+- **Three.js** - 3D graphics and animations
+- **LocalStorage API** - Data persistence
+- **Canvas API** - Charts and visualizations
 
-### Typography
-- **Font**: -apple-system, BlinkMacSystemFont, 'Segoe UI'
-- **Headings**: 700 weight, -0.03em letter-spacing
-- **Body**: 400 weight, 1.6 line-height
+## 🎯 Getting Started
 
-### Materials (3D)
-- **Outer Structure**: Brushed matte black, 0.9 metalness, 0.3 roughness
-- **Core Sphere**: Dark glass, 0.9 metalness, 0.1 roughness, transmission
-- **Energy Lines**: Emissive cyan/pink with subtle pulse
-- **Holographic UI**: Transparent with grid lines
+### Prerequisites
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- No installation or build process required!
 
-## 🎬 Animation Philosophy
+### Running the App
 
-### Principles
-1. **Engineered precision** - Every movement is intentional
-2. **Smooth interpolation** - Always use lerp, never direct binding
-3. **Controlled intensity** - Subtle effects, no chaos
-4. **Cinematic timing** - Proper easing for premium feel
-5. **Performance first** - Maintain 60fps at all costs
+1. Clone or download this repository
+2. Open `index.html` in your web browser
+3. Create an account or login
+4. Start organizing your academic life!
 
-### Easing
-```javascript
-easeInOutCubic(t) {
-    return t < 0.5 
-        ? 4 * t * t * t 
-        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+### First Time Setup
+
+1. **Sign Up** - Create your account with name, email, and password
+2. **Add Assignments** - Click "Add Assignment" to track your tasks
+3. **Schedule Exams** - Add upcoming exams with dates
+4. **Create Notes** - Organize notes by subject
+5. **Set Goals** - Define academic and skill goals
+6. **Use Timer** - Start Pomodoro sessions for focused study
+
+## ⌨️ Keyboard Shortcuts
+
+- `Ctrl/Cmd + K` - Focus search
+- `Esc` - Close modals
+
+## 🎨 Customization
+
+### Changing Colors
+Edit the CSS variables in `styles/main.css`:
+
+```css
+:root {
+    --accent-1: #6366f1;  /* Primary color */
+    --accent-2: #8b5cf6;  /* Secondary color */
+    --accent-3: #ec4899;  /* Accent color */
 }
 ```
 
-### Interpolation
+### Adjusting Animations
+Modify animation speeds in `styles/animations.css` or disable them for better performance.
+
+### Timer Duration
+Change the default Pomodoro length in `components/timer.js`:
+
 ```javascript
-lerp(start, end, t) {
-    return start + (end - start) * t;
-}
+let timerSeconds = 25 * 60; // Change 25 to your preferred minutes
 ```
 
-## 🔧 Technical Details
+## 📊 Data Management
 
-### Three.js Setup
-- **Renderer**: WebGLRenderer with antialiasing
-- **Tone Mapping**: ACESFilmicToneMapping (cinematic)
-- **Shadow Map**: PCFSoftShadowMap (soft shadows)
-- **Pixel Ratio**: Capped at 2 for performance
+### Export Data
+Go to Settings → Data → Export to download a JSON backup of all your data.
 
-### Lighting System
-- **Ambient**: 0.1 intensity base illumination
-- **Rim Light 1**: Cyan directional, 1.5 intensity
-- **Rim Light 2**: Magenta directional, 1.2 intensity
-- **Key Light**: White directional, 0.6 intensity, shadows enabled
-- **Spotlight**: Cyan spot, 2 intensity, slow sweep animation
+### Import Data
+Use the import function to restore data from a backup file.
 
-### Performance Optimizations
-- Geometry reuse
-- Material sharing
-- Efficient particle system
-- RequestAnimationFrame loop
-- Passive scroll listeners
-- Debounced resize handlers
+### Reset Data
+Settings → Data → Reset All Data (Warning: This cannot be undone!)
 
-## 📱 Responsive Breakpoints
+## 🏆 Hackathon-Ready Features
 
-- **Desktop**: Full cinematic experience (1024px+)
-- **Tablet**: Scaled layout (768px - 1024px)
-- **Mobile**: Optimized stacked layout (<768px)
+This project is optimized for hackathon judging with:
 
-## 🎯 Judge Psychology Strategy
+- ✅ **Strong First Impression** - Cinematic landing page with 3D animations
+- ✅ **Clear Problem Statement** - Well-defined user pain points
+- ✅ **Beautiful UI/UX** - Premium design inspired by Apple, Notion, and Linear
+- ✅ **Smooth Animations** - Professional micro-interactions throughout
+- ✅ **Responsive Design** - Works on all devices
+- ✅ **Fast Performance** - Optimized loading and animations
+- ✅ **Complete Features** - Fully functional productivity suite
+- ✅ **Clean Code** - Well-organized and documented
 
-### First 5 Seconds
-- Immediate premium feel with loading animation
-- Smooth 3D initialization
-- Clean, minimal interface
+## 🚀 Future Enhancements
 
-### Smoothness
-- 60fps maintained throughout
-- Buttery scroll interpolation
-- No janky transitions
+- [ ] Backend integration with user authentication
+- [ ] Cloud sync across devices
+- [ ] AI-powered study suggestions
+- [ ] Collaboration features for group projects
+- [ ] Mobile app (React Native)
+- [ ] Browser extension
+- [ ] Calendar integration
+- [ ] Notification system
+- [ ] Study group features
+- [ ] Grade tracking
 
-### Cleanliness
-- Consistent spacing system
-- Minimal color palette
-- Controlled typography
+## 📝 Browser Compatibility
 
-### Interaction Polish
-- Subtle hover effects
-- Smooth state transitions
-- Responsive feedback
+- ✅ Chrome 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Edge 90+
 
-### Stability
-- No console errors
-- Graceful degradation
-- Cross-browser compatibility
+## 🐛 Known Issues
 
-## 🏆 Competitive Advantages
+- 3D animations may be slower on older devices (can be disabled)
+- LocalStorage has a 5-10MB limit per domain
+- No data sync between devices (coming soon)
 
-### What Others Do
-- Use templates
-- Overuse neon effects
-- Add random animations
-- Forget mobile optimization
-- Gaming-style chaos
+## 💡 Tips for Best Experience
 
-### What This Does
-- Custom 3D engine
-- Controlled lighting
-- Engineered animations
-- Perfect responsiveness
-- Corporate minimalism
+1. Use on a desktop/laptop for full 3D experience
+2. Enable hardware acceleration in browser settings
+3. Use Chrome or Firefox for best performance
+4. Regular data exports recommended
+5. Close other tabs for smoother animations
 
-## 🚀 Deployment
+## 📄 License
 
-### Local Development
-```bash
-# Simple HTTP server
-python -m http.server 8000
-# or
-npx serve
-```
+This project is open source and available under the MIT License.
 
-### Production
-- Host on Vercel, Netlify, or any static host
-- Ensure Three.js CDN is accessible
-- Test on multiple devices
-- Verify 60fps performance
+## 👨‍💻 Author
 
-## 📊 Browser Support
+Built with ❤️ for students everywhere
 
-- Chrome 90+ ✅
-- Firefox 88+ ✅
-- Safari 14+ ✅
-- Edge 90+ ✅
+## 🙏 Acknowledgments
 
-## 🎓 Learning Resources
+- Three.js for 3D graphics
+- Inter font by Rasmus Andersson
+- Inspiration from Apple, Notion, and Linear design systems
 
-- [Three.js Documentation](https://threejs.org/docs/)
-- [WebGL Fundamentals](https://webglfundamentals.org/)
-- [Awwwards](https://www.awwwards.com/) - Design inspiration
+## 📧 Support
 
-## 📝 License
-
-Created for Survival Arena 2026 competition.
+For issues or questions, please open an issue on GitHub.
 
 ---
 
-**Only One Survives.**
+**Made for students, by students. Study smarter, not harder! 🎓✨**
