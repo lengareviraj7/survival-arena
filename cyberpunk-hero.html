@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Survival — Enter The Metaverse</title>
+    <link rel="stylesheet" href="cyberpunk-styles.css">
+</head>
+<body>
+    <!-- WebGL Canvas -->
+    <canvas id="cyberpunk-canvas"></canvas>
+    
+    <!-- Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+    
+    <!-- Scanning Line -->
+    <div class="scan-line"></div>
+    
+    <!-- Hero Content -->
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">
+                <span class="glitch" data-text="PRODUCTIVITY">PRODUCTIVITY</span>
+                <span class="glitch" data-text="SURVIVAL">SURVIVAL</span>
+            </h1>
+            <p class="hero-subtitle">Enter the next-gen productivity metaverse</p>
+            
+            <!-- Energy Ring Behind Text -->
+            <div class="energy-ring"></div>
+            <div class="energy-ring ring-2"></div>
+            
+            <!-- CTA Button -->
+            <button class="cta-button" id="ctaButton">
+                <span class="button-text">INITIALIZE SYSTEM</span>
+                <span class="button-glow"></span>
+                <span class="button-border"></span>
+            </button>
+            
+            <!-- Stats Display -->
+            <div class="stats-display">
+                <div class="stat-item">
+                    <span class="stat-label">NEURAL SYNC</span>
+                    <span class="stat-value" id="neuralSync">98.7%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">SYSTEM STATUS</span>
+                    <span class="stat-value status-active">ONLINE</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">USERS ACTIVE</span>
+                    <span class="stat-value" id="usersActive">1,247</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span>SCROLL TO EXPLORE</span>
+        </div>
+    </div>
+    
+    <!-- Holographic UI Elements -->
+    <div class="hud-corners">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">INITIALIZING QUANTUM CORE</p>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <p class="loading-percent" id="loadingPercent">0%</p>
+        </div>
+    </div>
+    
+    <!-- Content Section (for scroll demo) -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Welcome to the Future</h2>
+            <p class="section-text">Experience productivity like never before in our immersive digital environment.</p>
+        </div>
+    </section>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="cyberpunk-shaders.js"></script>
+    <script src="cyberpunk-scene.js"></script>
+    <script src="cyberpunk-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Arena 2026 — Only One Survives</title>
+    <link rel="stylesheet" href="arena-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="arena-nav">
+        <div class="nav-logo">SURVIVAL ARENA 2026</div>
+        <div class="nav-links">
+            <a href="#overview">Overview</a>
+            <a href="#trials">Trials</a>
+            <a href="#leaderboard">Leaderboard</a>
+            <a href="#register">Register</a>
+        </div>
+    </nav>
+
+    <!-- WebGL Canvas -->
+    <canvas id="arena-canvas"></canvas>
+
+    <!-- Scanline Effect -->
+    <div class="scanline"></div>
+
+    <!-- Vignette -->
+    <div class="vignette"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+        <!-- Main Title (will be 3D in scene) -->
+        <div id="title-container"></div>
+        
+        <!-- Subtitle -->
+        <div class="subtitle-container">
+            <div class="subtitle-line"></div>
+            <h2 class="subtitle">SURVIVAL ARENA 2026</h2>
+            <div class="subtitle-line"></div>
+        </div>
+
+        <!-- CTA Button -->
+        <button class="arena-cta" id="arenaButton">
+            <span class="button-bg"></span>
+            <span class="button-border"></span>
+            <span class="button-text">ENTER THE ARENA</span>
+            <span class="button-glow"></span>
+        </button>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">ACTIVE PLAYERS</span>
+                <span class="stat-value" id="activePlayers">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-label">SURVIVAL RATE</span>
+                <span class="stat-value" id="survivalRate">0%</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-label">ARENA STATUS</span>
+                <span class="stat-value status-live">LIVE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Banner -->
+    <div class="warning-banner">
+        <div class="warning-icon">⚠</div>
+        <div class="warning-text">HIGH-STAKES ELIMINATION PROTOCOL ACTIVE</div>
+        <div class="warning-icon">⚠</div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="logo-ring"></div>
+                <div class="logo-ring ring-2"></div>
+                <div class="logo-center">SA</div>
+            </div>
+            <div class="loading-text">INITIALIZING ARENA SYSTEMS</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingBar"></div>
+            </div>
+            <div class="loading-percent" id="loadingPercent">0%</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="arena-shaders.js"></script>
+    <script src="arena-scene.js"></script>
+    <script src="arena-particles.js"></script>
+    <script src="arena-structure.js"></script>
+    <script src="arena-effects.js"></script>
+    <script src="arena-ui.js"></script>
+    <script src="arena-app.js"></script>
+</body>
+</html>

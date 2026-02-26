@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS OS — Survival Arena 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nexus-styles.css">
+</head>
+<body>
+
+<!-- INTRO OVERLAY -->
+<div id="intro-overlay">
+<div class="intro-logo">NEXUS OS</div>
+<div class="intro-sub">Survival Arena 2026 — Productivity Combat System</div>
+<div class="intro-bar"><div class="intro-bar-fill"></div></div>
+<div class="intro-pct" id="introPct">INITIALIZING... 0%</div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+
+<!-- CANVASES -->
+<canvas id="bg-canvas"></canvas>
+<canvas id="post-canvas"></canvas>
+
+<!-- FX LAYERS -->
+<div id="vignette"></div>
+<div id="chromatic"></div>
+<div id="scanline"></div>
+
+<!-- HUD -->
+<div class="hud" id="hud-tl">
+<div class="hud-line"><span class="hud-dot"></span>NEXUS OS v4.0.2</div>
+<div class="hud-line"><span class="hud-dot green"></span>QUANTUM CORE: ONLINE</div>
+<div>SECTOR: ALPHA-9 / NODE: <span id="nodeId">--</span></div>
+</div>
+
+<div class="hud" id="hud-tr">
+<div>SESSION: <span id="sessionT">00:00:00</span></div>
+<div>FPS: <span id="fpsDisp">60</span> / RENDER: ACTIVE</div>
+<div class="hud-line"><span class="hud-dot pink"></span>THREAT: <span id="threatLvl">MINIMAL</span></div>
+</div>
+
+<div class="hud" id="hud-bl">
+<div>TASKS ACTIVE: <span id="tasksAct">0</span></div>
+<div>EFFICIENCY: <span id="effPct">0</span>%</div>
+</div>
+
+<div class="hud" id="hud-br">
+<div>USERS ONLINE: <span id="usersOn">0</span></div>
+<div>SYNC: <span id="syncSt">NOMINAL</span></div>
+</div>
+
+<!-- RADAR -->
+<div id="radar"><canvas id="radarCanvas" width="90" height="90"></canvas></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+<a href="index.html" class="nav-logo">NEXUS OS</a>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="arena-hero.html">Arena</a></li>
+<li><a href="register.html">Register</a></li>
+<li><a href="dashboard.html">Dashboard</a></li>
+</ul>
+<div class="nav-status"><span class="ns-dot"></span>ALL SYSTEMS OPERATIONAL</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+<div class="warp-ring wr-1"></div>
+<div class="warp-ring wr-2"></div>
+<div class="warp-ring wr-3"></div>
+<div class="warp-ring wr-4"></div>
+
+<div class="sys-tag">
+<span class="sys-tag-dot"></span>
+NEXUS PRODUCTIVITY SURVIVAL SYSTEM — SEASON 01
+</div>
+
+<h1 class="hero-title" id="heroTitle">
+<span class="t-line1">
+<span class="t-line1-inner">SURVIVE &amp;<br>DOMINATE</span>
+</span>
+<span class="t-line2">THE DIGITAL FRONTIER</span>
+</h1>
+
+<p class="hero-sub">The <em>next-generation</em> productivity OS — where your tasks fight back</p>
+
+<div class="hero-btns">
+<a href="arena-hero.html" class="btn-holo btn-primary" id="btnLaunch">
+<div class="bh-bg"></div>
+<div class="bh-border"></div>
+<div class="bh-scan"></div>
+<span>⚡ ENTER ARENA</span>
+</a>
+<a href="register.html" class="btn-holo btn-secondary" id="btnRegister">
+<div class="bh-bg"></div>
+<div class="bh-border"></div>
+<div class="bh-scan"></div>
+<span>REGISTER NOW</span>
+</a>
+</div>
+
+<div class="hero-stats">
+<div class="stat-item">
+<span class="stat-num" id="s1">0</span>
+<span class="stat-lbl">Active Users</span>
+</div>
+<div class="stat-item">
+<span class="stat-num" id="s2">0</span>
+<span class="stat-lbl">Tasks Survived</span>
+</div>
+<div class="stat-item">
+<span class="stat-num" id="s3">0</span>
+<span class="stat-lbl">Missions Complete</span>
+</div>
+<div class="stat-item">
+<span class="stat-num" id="s4">0</span>
+<span class="stat-lbl">Data Nodes</span>
+</div>
+</div>
+
+<div class="scroll-hint">
+<span>Scroll to Explore</span>
+<div class="sh-line"></div>
+</div>
+</section>
+
+<!-- HOLOGRAPHIC PANELS -->
+<div id="holo-panels">
+<div class="holo-panel hp-left" id="hpLeft">
+<div class="hp-title">// NEURAL CORE</div>
+<div>LOAD: <span id="hpLoad">0</span>%</div>
+<div class="hp-bar"><div class="hp-bar-fill" id="hpLoadBar" style="width:0%"></div></div>
+<div>MEMORY: <span id="hpMem">0</span>%</div>
+<div class="hp-bar"><div class="hp-bar-fill" id="hpMemBar" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+<div style="margin-top:.4rem">NODES: <span id="hpNodes">1024</span></div>
+</div>
+
+<div class="holo-panel hp-right" id="hpRight">
+<div class="hp-title">// THREAT MATRIX</div>
+<div>LEVEL: <span id="hpThreat">LOW</span></div>
+<div class="hp-bar"><div class="hp-bar-fill" id="hpThreatBar" style="width:12%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+<div>ACTIVE: <span id="hpActive">3</span></div>
+<div>FIREWALL: ENGAGED</div>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+<div class="content-wrap">
+
+<div class="section-label">// Core Systems</div>
+<div class="section-title">MISSION ARSENAL</div>
+<div class="section-divider"></div>
+
+<div class="feat-grid">
+<div class="feat-card" data-reveal>
+<span class="fc-num">01 // CORE</span>
+<span class="fc-icon">⚡</span>
+<div class="fc-title">Task Combat Engine</div>
+<p class="fc-desc">Your tasks aren't passive. They evolve, escalate, and fight back. Defeat them before the deadline hits zero.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:82%"></div></div>
+</div>
+
+<div class="feat-card" data-reveal>
+<span class="fc-num">02 // INTEL</span>
+<span class="fc-icon">🧠</span>
+<div class="fc-title">Neural Focus Mode</div>
+<p class="fc-desc">AI-driven deep work sessions that adapt to your cognitive load, blocking threats and maximizing output cycles.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:95%"></div></div>
+</div>
+
+<div class="feat-card" data-reveal>
+<span class="fc-num">03 // ARENA</span>
+<span class="fc-icon">🏆</span>
+<div class="fc-title">Survival Leaderboard</div>
+<p class="fc-desc">Compete globally. Track eliminations, streaks, and mission completions. Only the most productive survive.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:68%"></div></div>
+</div>
+
+<div class="feat-card" data-reveal>
+<span class="fc-num">04 // DATA</span>
+<span class="fc-icon">🌐</span>
+<div class="fc-title">Quantum Sync Grid</div>
+<p class="fc-desc">Cross-device neural sync across all nodes. Your progress propagates instantly through the digital lattice.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:74%"></div></div>
+</div>
+
+<div class="feat-card" data-reveal>
+<span class="fc-num">05 // RECON</span>
+<span class="fc-icon">🔍</span>
+<div class="fc-title">Threat Analytics</div>
+<p class="fc-desc">Predictive AI maps upcoming task spikes and cognitive bottlenecks before they become critical failures.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:88%"></div></div>
+</div>
+
+<div class="feat-card" data-reveal>
+<span class="fc-num">06 // SHIELD</span>
+<span class="fc-icon">🛡️</span>
+<div class="fc-title">Burnout Defense</div>
+<p class="fc-desc">Biometric-aware pacing engine. Detects overload signals and deploys recovery protocols before system failure.</p>
+<div class="fc-bar"><div class="fc-bar-fill" style="--w:91%"></div></div>
+</div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+<h2 class="cta-title">Ready to Enter the Arena?</h2>
+<p class="cta-desc">Join thousands of competitors in the ultimate productivity survival challenge</p>
+<div class="cta-buttons">
+<a href="register.html" class="btn-holo btn-primary">
+<div class="bh-bg"></div>
+<div class="bh-border"></div>
+<div class="bh-scan"></div>
+<span>CREATE ACCOUNT</span>
+</a>
+<a href="arena-hero.html" class="btn-holo btn-secondary">
+<div class="bh-bg"></div>
+<div class="bh-border"></div>
+<div class="bh-scan"></div>
+<span>EXPLORE ARENA</span>
+</a>
+</div>
+</div>
+
+<!-- Terminal -->
+<div class="terminal" id="terminal">
+<div class="t-header">[NEXUS-OS] BOOT SEQUENCE — QUANTUM CORE v4.0.2</div>
+<div id="t-output"></div>
+<span class="t-cursor"></span>
+</div>
+
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<div class="footer-section">
+<h4>NEXUS OS</h4>
+<p>Survival Arena 2026</p>
+<p>Productivity Combat System</p>
+</div>
+<div class="footer-section">
+<h4>QUICK LINKS</h4>
+<a href="index.html">Home</a>
+<a href="arena-hero.html">Arena</a>
+<a href="register.html">Register</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
+<div class="footer-section">
+<h4>SYSTEM</h4>
+<a href="#">Documentation</a>
+<a href="#">API</a>
+<a href="#">Status</a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; 2026 NEXUS OS. All systems operational.</p>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="nexus-scene.js"></script>
+<script src="nexus-app.js"></script>
+
+</body>
+</html>

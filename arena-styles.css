@@ -1,0 +1,590 @@
+/* ===================================
+   SURVIVAL ARENA STYLES
+   =================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --black: #000000;
+    --energy-red: #FF1E1E;
+    --neon-blue: #00E5FF;
+    --metallic-gray: #2B2B2B;
+    --dark-gray: #0a0a0a;
+}
+
+body {
+    font-family: 'Rajdhani', 'Orbitron', 'Arial Black', sans-serif;
+    background: var(--black);
+    color: #ffffff;
+    overflow-x: hidden;
+    cursor: crosshair;
+}
+
+/* ===================================
+   CANVAS
+   =================================== */
+#arena-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+/* ===================================
+   NAVIGATION
+   =================================== */
+.arena-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4rem;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.nav-logo {
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: var(--energy-red);
+    text-shadow: 0 0 20px var(--energy-red);
+}
+
+.nav-links {
+    display: flex;
+    gap: 3rem;
+}
+
+.nav-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--energy-red);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #ffffff;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* ===================================
+   SCANLINE EFFECT
+   =================================== */
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.3;
+}
+
+.scanline::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to bottom, var(--energy-red), transparent);
+    animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100vh); }
+}
+
+/* ===================================
+   VIGNETTE
+   =================================== */
+.vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        rgba(0, 0, 0, 0.4) 60%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ===================================
+   HERO CONTENT
+   =================================== */
+.hero-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    width: 90%;
+    max-width: 1200px;
+}
+
+#title-container {
+    height: 200px;
+    margin-bottom: 2rem;
+}
+
+/* ===================================
+   SUBTITLE
+   =================================== */
+.subtitle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease 1.5s forwards;
+}
+
+.subtitle-line {
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--energy-red), transparent);
+}
+
+.subtitle {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+}
+
+/* ===================================
+   CTA BUTTON
+   =================================== */
+.arena-cta {
+    position: relative;
+    padding: 1.5rem 4rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeInUp 1s ease 2s forwards;
+    transition: all 0.3s ease;
+}
+
+.button-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 30, 30, 0.1);
+    transition: all 0.3s ease;
+}
+
+.button-border {
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--energy-red), transparent, var(--energy-red));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.button-text {
+    position: relative;
+    z-index: 2;
+}
+
+.button-glow {
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(circle, var(--energy-red), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(20px);
+}
+
+.arena-cta:hover {
+    transform: translateY(-5px);
+}
+
+.arena-cta:hover .button-bg {
+    background: rgba(255, 30, 30, 0.3);
+}
+
+.arena-cta:hover .button-glow {
+    opacity: 0.6;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+}
+
+.arena-cta:active {
+    transform: translateY(-2px);
+}
+
+/* Ripple Effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--energy-red), transparent 70%);
+    transform: scale(0);
+    animation: ripple 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ===================================
+   STATS BAR
+   =================================== */
+.stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 4rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease 2.5s forwards;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--energy-red);
+    text-shadow: 0 0 10px var(--energy-red);
+    font-family: 'Orbitron', monospace;
+}
+
+.status-live {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--energy-red), transparent);
+}
+
+/* ===================================
+   WARNING BANNER
+   =================================== */
+.warning-banner {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: rgba(255, 30, 30, 0.1);
+    border: 1px solid var(--energy-red);
+    z-index: 10;
+    opacity: 0;
+    animation: fadeInUp 1s ease 3s forwards;
+}
+
+.warning-icon {
+    color: var(--energy-red);
+    font-size: 1.2rem;
+    animation: warningPulse 1s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.warning-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===================================
+   LOADING SCREEN
+   =================================== */
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-logo {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 3rem;
+}
+
+.logo-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--energy-red);
+    border-radius: 50%;
+    animation: rotateRing 3s linear infinite;
+}
+
+.logo-ring::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: var(--energy-red);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--energy-red);
+}
+
+.ring-2 {
+    animation: rotateRing 2s linear infinite reverse;
+    border-color: var(--neon-blue);
+}
+
+.ring-2::before {
+    background: var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+@keyframes rotateRing {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.logo-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--energy-red);
+    text-shadow: 0 0 20px var(--energy-red);
+}
+
+.loading-text {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+
+.loading-bar {
+    width: 400px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--energy-red), var(--neon-blue));
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--energy-red);
+}
+
+.loading-percent {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--energy-red);
+    font-family: 'Orbitron', monospace;
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================
+   GLITCH EFFECT
+   =================================== */
+.glitch {
+    animation: glitch 0.3s ease;
+}
+
+@keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+}
+
+/* ===================================
+   SHOCKWAVE EFFECT
+   =================================== */
+.shockwave {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border: 3px solid var(--energy-red);
+    border-radius: 50%;
+    animation: shockwave 0.8s ease-out;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+@keyframes shockwave {
+    to {
+        width: 2000px;
+        height: 2000px;
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+@media (max-width: 768px) {
+    .arena-nav {
+        padding: 0 2rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .stats-bar {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .stat-divider {
+        width: 40px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--energy-red), transparent);
+    }
+    
+    .arena-cta {
+        padding: 1.2rem 3rem;
+        font-size: 0.9rem;
+    }
+    
+    .warning-banner {
+        font-size: 0.75rem;
+        padding: 0.75rem 1.5rem;
+    }
+    
+    .loading-bar {
+        width: 300px;
+    }
+}
+
+/* ===================================
+   CAMERA SHAKE
+   =================================== */
+.camera-shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-2px, 1px); }
+    20%, 40%, 60%, 80% { transform: translate(2px, -1px); }
+}

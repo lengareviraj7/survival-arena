@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Arena 2026 — Quantum Core</title>
+    <link rel="stylesheet" href="styles-3d.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">Survival Arena 2026</div>
+            <div class="nav-links">
+                <a href="#overview">Overview</a>
+                <a href="#quantum">Quantum Core</a>
+                <a href="#technology">Technology</a>
+                <a href="#leaderboard">Leaderboard</a>
+                <a href="#register">Register</a>
+            </div>
+            <button class="nav-cta">Enter The Arena</button>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#overview">Overview</a>
+        <a href="#quantum">Quantum Core</a>
+        <a href="#technology">Technology</a>
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#register">Register</a>
+    </div>
+
+    <!-- 3D Quantum Core Section -->
+    <section id="quantum-core" class="quantum-section">
+        <canvas id="quantum-canvas"></canvas>
+        
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="loading-bar"></div>
+            <p>INITIALIZING QUANTUM CORE</p>
+        </div>
+
+        <!-- Text Overlays -->
+        <div class="text-overlay phase-1" data-phase="1">
+            <h1 class="hero-title">Survival Arena 2026</h1>
+            <p class="hero-subtitle">Only One Survives.</p>
+        </div>
+
+        <div class="text-overlay phase-3" data-phase="3">
+            <div class="content-left">
+                <h2>Engineered for Elimination Precision.</h2>
+                <p class="micro-text">Quantum-level threat assessment</p>
+                <p class="micro-text">Neural pathway prediction</p>
+                <p class="micro-text">Real-time tactical adaptation</p>
+            </div>
+        </div>
+
+        <div class="text-overlay phase-4" data-phase="4">
+            <div class="content-right">
+                <h2>Adaptive Intelligence. Real-Time Control.</h2>
+                <ul class="tech-list">
+                    <li>Quantum processing core</li>
+                    <li>Biometric threat analysis</li>
+                    <li>Predictive elimination matrix</li>
+                    <li>Neural synchronization</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="text-overlay phase-5" data-phase="5">
+            <h2 class="centered-title">Immersive. Relentless. Unforgiving.</h2>
+        </div>
+
+        <div class="text-overlay phase-6" data-phase="6">
+            <div class="cta-container">
+                <h2>Enter the Arena.</h2>
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">Register Now</button>
+                    <a href="#technology" class="btn-secondary">View Technology</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="tech-section">
+        <div class="container">
+            <h2 class="section-title">Quantum Systems</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">⚛️</div>
+                    <h3>Quantum Processing</h3>
+                    <p>Advanced quantum algorithms process millions of tactical scenarios simultaneously, predicting outcomes with 99.7% accuracy.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🧬</div>
+                    <h3>Neural Mapping</h3>
+                    <p>Real-time biometric analysis tracks cognitive patterns, stress responses, and decision-making capabilities.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">⚡</div>
+                    <h3>Adaptive Systems</h3>
+                    <p>Dynamic difficulty scaling ensures optimal challenge levels while maintaining competitive integrity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard Section -->
+    <section id="leaderboard" class="leaderboard-section">
+        <div class="container">
+            <h2 class="section-title">Current Rankings</h2>
+            <div class="leaderboard-table">
+                <table id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Competitor</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="register" class="registration-section">
+        <div class="container">
+            <h2 class="section-title">Register for Arena 2026</h2>
+            <form id="registrationForm" class="registration-form">
+                <div class="form-group">
+                    <input type="text" id="fullName" required>
+                    <label for="fullName">Full Name</label>
+                    <span class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Email Address</label>
+                    <span class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="age" required min="18">
+                    <label for="age">Age</label>
+                    <span class="error-message"></span>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I accept the terms and conditions of Arena participation</label>
+                    <span class="error-message"></span>
+                </div>
+                <button type="submit" class="btn-primary">Submit Registration</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Survival Arena. Quantum Core Technology. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="quantum-core.js"></script>
+    <script src="app-3d.js"></script>
+</body>
+</html>
